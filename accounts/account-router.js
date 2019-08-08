@@ -5,12 +5,25 @@ const db = require('../data/dbConfig.js')
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-  try {
-    const accounts = await db.select('*').from('accounts')
-    res.status(200).json(accounts)
-  }
-  catch(error) {
-    res.status(500).json({ message: "Could Not Get Accounts", error: error})
+  const urlParams = new URLSearchParams(req.url)
+  let limit = parseInt(urlParams.get('/?limit'), 10)
+  console.log(limit)
+  if(limit) {
+    try {
+      const accounts = await db.select('*').from('accounts').limit(limit)
+      res.status(200).json(accounts)
+    }
+    catch(error) {
+      res.status(500).json({ message: "Could Not Get Accounts", error: error})
+    }
+  } else {
+    try {
+      const accounts = await db.select('*').from('accounts')
+      res.status(200).json(accounts)
+    }
+    catch(error) {
+      res.status(500).json({ message: "Could Not Get Accounts", error: error})
+    }
   }
 });
 
